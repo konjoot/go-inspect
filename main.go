@@ -22,6 +22,13 @@ func init() {
 func main() {
 	checkRequirements()
 
+	file, err := os.Open(flag.Arg(0))
+	if err != nil {
+		fmt.Printf("Error! %s\n", err)
+		os.Exit(2)
+	}
+	defer file.Close()
+
 	fmt.Printf("input file: %s, output file: %s\n", flag.Arg(0), output)
 }
 
