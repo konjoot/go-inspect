@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -25,15 +26,14 @@ func main() {
 
 	file, err := os.Open(flag.Arg(0))
 	if err != nil {
-		fmt.Printf("Error! %s\n", err)
-		os.Exit(2)
+		log.Fatalf("%s\n", err)
 	}
 	defer file.Close()
 
 	prog := "go"
 	path, err := exec.LookPath(prog)
 	if err != nil {
-		fmt.Printf("Please, install %s first.", prog)
+		log.Fatalf("please, install %s first.", prog)
 	}
 	fmt.Printf("%s is available at %s\n", prog, path)
 
@@ -46,10 +46,8 @@ func checkRequirements() {
 	if len(args) == 0 {
 		flag.Usage()
 
-		fmt.Printf("Error! The input file is required\n")
-
-		os.Exit(1)
+		log.Fatalf("the input file not specified\n")
 	} else if len(args) > 1 {
-		fmt.Printf("Notice! To many positional arguments, ignoring %v\n", args[1:])
+		log.Printf("to many positional arguments, ignoring %v\n", args[1:])
 	}
 }
