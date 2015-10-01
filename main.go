@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 )
 
 var output string
@@ -28,6 +29,13 @@ func main() {
 		os.Exit(2)
 	}
 	defer file.Close()
+
+	prog := "go"
+	path, err := exec.LookPath(prog)
+	if err != nil {
+		fmt.Printf("Please, install %s first.", prog)
+	}
+	fmt.Printf("%s is available at %s\n", prog, path)
 
 	fmt.Printf("input file: %s, output file: %s\n", flag.Arg(0), output)
 }
