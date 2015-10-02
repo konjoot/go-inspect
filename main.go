@@ -31,11 +31,29 @@ func main() {
 	defer file.Close()
 
 	prog := "go"
-	path, err := exec.LookPath(prog)
+
+	_, err = exec.LookPath(prog)
 	if err != nil {
 		log.Fatalf("please, install %s first.", prog)
 	}
-	fmt.Printf("%s is available at %s\n", prog, path)
+
+	// cmd := exec.Command(prog, "build", "-o test", "-gcflags -m", file.Name())
+	cmd := exec.Command(prog, "-version")
+
+	cmd.Env = []string{
+		fmt.Sprintf("GOBIN=%s", os.Getenv("GOBIN")),
+		fmt.Sprintf("GOPATH=%s", os.Getenv("GOPATH")),
+		fmt.Sprintf("GOROOT=%s", os.Getenv("GOROOT")),
+		"GOARCH=amd64", "GOHOSTARCH=amd64", "GOHOSTOS=linux", "GOOS=linux"}
+
+	fmt.Printf("%v\n", cmd.Env)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
+	fmt.Printf("out: %s\n", out)
 
 	fmt.Printf("input file: %s, output file: %s\n", flag.Arg(0), output)
 }
