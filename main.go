@@ -37,20 +37,11 @@ func main() {
 		log.Fatalf("please, install %s first.", prog)
 	}
 
-	// cmd := exec.Command(prog, "build", "-o test", "-gcflags -m", file.Name())
-	cmd := exec.Command(prog, "-version")
-
-	cmd.Env = []string{
-		fmt.Sprintf("GOBIN=%s", os.Getenv("GOBIN")),
-		fmt.Sprintf("GOPATH=%s", os.Getenv("GOPATH")),
-		fmt.Sprintf("GOROOT=%s", os.Getenv("GOROOT")),
-		"GOARCH=amd64", "GOHOSTARCH=amd64", "GOHOSTOS=linux", "GOOS=linux"}
-
-	fmt.Printf("%v\n", cmd.Env)
+	cmd := exec.Command(prog, "build", "-o", "test", "-gcflags", "-m", file.Name())
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatalf("%s", err)
+		log.Fatalf("Command execution failed: %s", err)
 	}
 
 	fmt.Printf("out: %s\n", out)
