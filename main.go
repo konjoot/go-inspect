@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
@@ -39,12 +40,27 @@ func main() {
 
 	cmd := exec.Command(prog, "build", "-o", "test", "-gcflags", "-m", file.Name())
 
-	out, err := cmd.CombinedOutput()
+	out, err := cmd.StderrPipe()
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
+	err = cmd.Start()
 	if err != nil {
 		log.Fatalf("Command execution failed: %s", err)
 	}
 
-	fmt.Printf("out: %s\n", out)
+	line := bufio.NewScanner(out)
+	defer out.Close()
+
+	for line.Scan() {
+		fmt.Printf("line: %s\n", line.Text())
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		log.Fatalf("Command execution failed: %s", err)
+	}
 
 	fmt.Printf("input file: %s, output file: %s\n", flag.Arg(0), output)
 }
